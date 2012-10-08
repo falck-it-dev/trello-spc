@@ -10,11 +10,29 @@ namespace TrelloSpc.Models
 
     public class CardRepository : ICardRepository
     {
+        private readonly ITrelloConfiguration _trelloConfiguration;
+        private readonly ITrelloGateway _trelloGateway;
+        private readonly IJsonParser _jsonParser;
+
+        public CardRepository(
+            ITrelloConfiguration trelloConfiguration, 
+            ITrelloGateway trelloGateway, 
+            IJsonParser jsonParser)
+        {
+            _trelloConfiguration = trelloConfiguration;
+            _trelloGateway = trelloGateway;
+            _jsonParser = jsonParser;
+        }
+
         public IEnumerable<Card> GetCardsForBoard(string boardId)
         {
-            yield return new Card { Name = "Card1" };
-            yield return new Card { Name = "Card2" };
-            yield return new Card { Name = "Card3" };
+            var url = string.Format("https://api.trello.com/1/boards/{0}?cards=open&key={1}&token={2}",
+                boardId,
+                _trelloConfiguration.AppKey,
+                _trelloConfiguration.UserToken);
+
+            var jsonData = _trelloGateway.GetJsonData(url);
+            return _jsonParser.GetCards(jsonData);
         }
     }
 }
