@@ -3,13 +3,13 @@ using NUnit.Framework;
 using TrelloSpc.Controllers;
 using TrelloSpc.Models;
 
-namespace TrelloSpc.UnitTest.Controllers
+namespace TrelloSpc.UnitTest.Controllers.BoardsControllerTest
 {
     [TestFixture]
-    public class BoardsControllerTest : AutoMockHelper
+    public class IndexTest : AutoMockHelper
     {
         [Test]
-        public void IndexShouldRedirectToDefaultBoard()
+        public void ShouldRedirectToDefaultBoard()
         {
             // Setup            
             var controller = GetInstance<BoardsController>();

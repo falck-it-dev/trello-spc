@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoMockHelper.cs" />
-    <Compile Include="Controllers\BoardsControllerTest.cs" />
+    <Compile Include="Controllers\BoardsControllerTest\IndexTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
