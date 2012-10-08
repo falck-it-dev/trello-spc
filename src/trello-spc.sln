@@ -3,6 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrelloSpc", "TrelloSpc\TrelloSpc.csproj", "{29457EF5-1F2E-4169-8A7A-375B76874A6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrelloSpc.UnitTest", "TrelloSpc.UnitTest\TrelloSpc.UnitTest.csproj", "{546CEA19-E48F-4645-BDEC-36AEBCBF469D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A2D4FC87-912E-4C5F-B671-0075B3BB46B6}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +20,10 @@ Global
 		{29457EF5-1F2E-4169-8A7A-375B76874A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29457EF5-1F2E-4169-8A7A-375B76874A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29457EF5-1F2E-4169-8A7A-375B76874A6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{546CEA19-E48F-4645-BDEC-36AEBCBF469D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{546CEA19-E48F-4645-BDEC-36AEBCBF469D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{546CEA19-E48F-4645-BDEC-36AEBCBF469D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{546CEA19-E48F-4645-BDEC-36AEBCBF469D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
