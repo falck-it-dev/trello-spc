@@ -1,5 +1,5 @@
 ﻿@using TrelloSpc.Models
-@model dynamic
+@model TrelloSpc.Controllers.BoardViewModel
 
 @{
     ViewBag.Title = "Board";
@@ -16,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var card in (IEnumerable<Card>)ViewData["Cards"])
+        @foreach (var card in Model.Cards)
         {
             <tr>
                 <td>@card.Name</td>

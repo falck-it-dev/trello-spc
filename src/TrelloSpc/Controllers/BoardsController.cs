@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using TrelloSpc.Models;
 
@@ -30,9 +31,11 @@ namespace TrelloSpc.Controllers
         public ActionResult Get(string id)
         {
             var cards = _cardRepository.GetCardsForBoard(id);
-            var result = View("Board");
-            result.ViewData["Cards"] = cards;
-            return result;
+            var viewModel = new BoardViewModel
+            {
+                Cards = cards.ToArray()
+            };
+            return View("Board", viewModel);            
         }
     }
 }

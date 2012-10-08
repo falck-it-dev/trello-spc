@@ -24,7 +24,8 @@ namespace TrelloSpc.UnitTest.Controllers.BoardsControllerTest
 
             // Verify
             var viewResult = (ViewResult)result;
-            Assert.That(viewResult.ViewData["Cards"], Is.EqualTo(cards));
+            var viewModel = (BoardViewModel)viewResult.Model;
+            Assert.That(viewModel.Cards, Is.EqualTo(cards));
         }
     }
 }
