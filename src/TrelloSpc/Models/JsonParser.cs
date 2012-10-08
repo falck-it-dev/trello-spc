@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Newtonsoft.Json.Linq;
 
 namespace TrelloSpc.Models
 {
@@ -14,7 +14,17 @@ namespace TrelloSpc.Models
     {
         public IEnumerable<Card> GetCards(string jsonResponse)
         {
-            throw new NotImplementedException();
+            JObject jObject = JObject.Parse(jsonResponse);
+            var jCards = jObject["cards"];
+            if (jCards == null)
+                throw new ApplicationException("Cannot read cards from json response.\r\nJson response:\r\n" + jsonResponse);
+
+            return from jCard in (JArray)jCards
+                   select new Card
+                   {
+                       Id = (string)jCard["id"],
+                       TrelloName = (string)jCard["name"]
+                   };
         }
     }
 }
