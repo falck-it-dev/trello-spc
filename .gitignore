@@ -5,3 +5,4 @@ obj
 *.ncrunchsolution
 _ReSharper.*
 packages
+local.config
