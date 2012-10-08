@@ -7,10 +7,14 @@ namespace TrelloSpc.Controllers
     public class BoardsController : Controller
     {
         private readonly ITrelloConfiguration _trelloConfiguration;
+        private readonly ICardRepository _cardRepository;
 
-        public BoardsController(ITrelloConfiguration trelloConfiguration)
+        public BoardsController(
+            ITrelloConfiguration trelloConfiguration, 
+            ICardRepository cardRepository)
         {
             _trelloConfiguration = trelloConfiguration;
+            _cardRepository = cardRepository;
         }
 
         //
@@ -25,7 +29,10 @@ namespace TrelloSpc.Controllers
         [HttpGet]
         public ActionResult Get(string id)
         {
-            throw new NotImplementedException();
+            var cards = _cardRepository.GetCardsForBoard(id);
+            var result = View();
+            result.ViewData["Cards"] = cards;
+            return result;
         }
     }
 }
