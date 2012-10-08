@@ -1,0 +1,27 @@
+﻿@using TrelloSpc.Models
+@model dynamic
+
+@{
+    ViewBag.Title = "Board";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Board</h2>
+
+<table>
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Points</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var card in (IEnumerable<Card>)ViewData["Cards"])
+        {
+            <tr>
+                <td>@card.Name</td>
+                <td>?</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -12,7 +12,9 @@ namespace TrelloSpc.Models
     {
         public IEnumerable<Card> GetCardsForBoard(string boardId)
         {
-            throw new NotImplementedException();
+            yield return new Card { Name = "Card1" };
+            yield return new Card { Name = "Card2" };
+            yield return new Card { Name = "Card3" };
         }
     }
 }

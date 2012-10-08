@@ -30,7 +30,7 @@ namespace TrelloSpc.Controllers
         public ActionResult Get(string id)
         {
             var cards = _cardRepository.GetCardsForBoard(id);
-            var result = View();
+            var result = View("Board");
             result.ViewData["Cards"] = cards;
             return result;
         }
