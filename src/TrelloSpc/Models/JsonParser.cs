@@ -14,25 +14,21 @@ namespace TrelloSpc.Models
     {
         public IEnumerable<Card> GetCards(string jsonResponse)
         {
-            JObject jObject = JObject.Parse(jsonResponse);
+            var jObject = JObject.Parse(jsonResponse);
             var lists = GetLists(jObject);
-            var jCards = jObject["cards"];
-            if (jCards == null)
-                throw new ApplicationException("Cannot read cards from json response.\r\nJson response:\r\n" + jsonResponse);
+            var cards = GetCards(jObject);
 
-            var cards = ((JArray)jCards).Select(CreateCard);
-            var cardsDict = cards.ToDictionary(x => x.Id);
+            ProcessActions(jObject, lists, cards);
 
-            var jActions = jObject["actions"];
-            ProcessActions(jActions, lists, cardsDict);
-
-            return cardsDict.Values;
+            return cards.Values;
         }
 
-        private void ProcessActions(JToken jActions, Dictionary<string, List> lists, Dictionary<string, Card> cardsDict)
+        private void ProcessActions(JToken jObject, Dictionary<string, List> lists, Dictionary<string, Card> cards)
         {
+            var jActions = jObject["actions"];
             if (jActions == null)
                 return;
+
             foreach (var jAction in (JArray)jActions)
             {
                 var data = jAction["data"];
@@ -43,11 +39,27 @@ namespace TrelloSpc.Models
                 if (listBefore != null && listAfter != null)
                 {
                     var listId = listAfter["id"];
-                    var card = cardsDict[cardId];
+                    var card = cards[cardId];
                     var list = lists[listId.Value<string>()];
                     card.MoveToList(list, time);
                 }
             }
+        }
+
+        private Dictionary<string, List> GetLists(JObject jObject)
+        {            
+            var lists = (JArray)jObject["lists"];
+            if (lists == null)
+                return null;
+            return lists.Select(CreateList).ToDictionary(x => x.Id);
+        }
+
+        private Dictionary<string, Card> GetCards(JObject jObject)
+        {
+            var cards = (JArray)jObject["cards"];            
+            if (cards == null)
+                throw new ApplicationException("Cannot read cards from json response.\r\nJson response:\r\n" + jObject);
+            return cards.Select(CreateCard).ToDictionary(x => x.Id);
         }
 
         private static Card CreateCard(JToken jToken)
@@ -59,19 +71,12 @@ namespace TrelloSpc.Models
                 };
         }
 
-        private Dictionary<string, List> GetLists(JObject jObject)
+        private static List CreateList(JToken jToken)
         {
-            var result = new Dictionary<string, List>();
-            var lists = jObject["lists"];
-            
-            if (lists != null)
-                foreach (var list in lists)
-                {
-                    var id = (string)list["id"];
-                    var name = (string)list["name"];
-                    result[id] = new List { Id = id, Name = name };
-                }
-            return result;
+            var id = (string) jToken["id"];
+            var name = (string) jToken["name"];
+            var list = new List {Id = id, Name = name};
+            return list;
         }
     }
 }
