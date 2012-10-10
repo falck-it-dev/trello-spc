@@ -60,7 +60,7 @@
     <Compile Include="Controllers\BoardsControllerTest\GetTest.cs" />
     <Compile Include="Controllers\BoardsControllerTest\IndexTest.cs" />
     <Compile Include="JsonParsing\ParseCardsTest.cs" />
-    <Compile Include="Model\CardTest.cs" />
+    <Compile Include="Model\CardTests\SetTrelloNameTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CardRepositoryTest.cs" />
   </ItemGroup>
