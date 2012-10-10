@@ -24,7 +24,7 @@ namespace TrelloSpc.Models
         public string GetJsonData(string uri)
         {
             var webRequest = (HttpWebRequest) WebRequest.Create(uri);
-            if (_networkConfiguration.HttpProxy != null)
+            if (!string.IsNullOrEmpty(_networkConfiguration.HttpProxy))
                 webRequest.Proxy = new WebProxy(_networkConfiguration.HttpProxy);
             var proxy = webRequest.Proxy;
             if (proxy != null && _networkConfiguration.UseNtlmProxyAuthentication)
