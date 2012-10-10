@@ -51,12 +51,17 @@ namespace TrelloSpc.Models
             }
         }
 
+        public List<MoveToListAction> Actions
+        {
+            get { return _actions; }
+        }
+
         public TimeSpan TimeInList(string listName)
         {
             var result = TimeSpan.Zero;
             DateTime? timeIntoList = null;
-            _actions.Sort();
-            foreach (var action in _actions)
+            Actions.Sort();
+            foreach (var action in Actions)
             {
                 if (action.List.Name == listName)
                 {
@@ -71,12 +76,14 @@ namespace TrelloSpc.Models
                     }
                 }
             }
+            if (timeIntoList != null)
+                result += DateTime.UtcNow - timeIntoList.Value;
             return result;
         }
 
         public void MoveToList(List list, DateTime utcTimeMovedToList)
         {
-            _actions.Add(new MoveToListAction
+            Actions.Add(new MoveToListAction
             {
                 List = list,
                 UtcTime = utcTimeMovedToList

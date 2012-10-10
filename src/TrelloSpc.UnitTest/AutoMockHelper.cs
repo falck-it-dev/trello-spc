@@ -10,7 +10,7 @@ namespace TrelloSpc.UnitTest
         static readonly MoqMockingKernel Kernel = new MoqMockingKernel();
 
         [SetUp]
-        public void Setup()
+        public void SetupAutomock()
         {
             Kernel.Reset();
         }

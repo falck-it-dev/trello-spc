@@ -35,5 +35,23 @@ namespace TrelloSpc.UnitTest.Model.CardTests
             var expected = TimeSpan.FromMinutes(1);
             Assert.That(actual, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void IncludeCurrentTimeInProgress()
+        {
+            // Setup
+            var time1 = DateTime.UtcNow.AddMinutes(-5);
+            var list1 = new List { Name = "LIST1" };
+            var card = new Card();
+            card.MoveToList(list1, time1);
+
+            // Exercise
+            var actual = card.TimeInList("LIST1");
+
+            // Verify
+            var expected = TimeSpan.FromMinutes(5);
+            var tolerance = TimeSpan.FromSeconds(5);
+            Assert.That(actual, Is.EqualTo(expected).Within(tolerance));
+        }
     }
 }
