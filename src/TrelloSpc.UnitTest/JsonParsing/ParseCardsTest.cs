@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
+using Newtonsoft.Json.Linq;
 using TrelloSpc.Models;
 
 namespace TrelloSpc.UnitTest.JsonParsing
@@ -11,20 +10,33 @@ namespace TrelloSpc.UnitTest.JsonParsing
     [TestFixture]
     public class ParseCardsTest
     {
+        private string ToJson(object obj)
+        {
+            return JObject.FromObject(obj).ToString();
+        }
+
+        private IEnumerable<Card> ParseCardsJson(string json)
+        {
+            var parser = new JsonParser();
+            return parser.GetCards(json);
+        }
+
         [Test]
         public void ShouldReturnCardsWithNameInitialized()
         {
             // Setup
-            var parser = new JsonParser();
-            var json = @"{""id"":""board-id"",""name"":""Board name"",
-                          ""cards"":[
-                              {""id"":""id-1"",""name"":""Card 1""},
-                              {""id"":""id-2"",""name"":""Card 2""}
-                        ]}";
-            
+            var data = new
+            {
+                id = "board-id",
+                name = "Board name",
+                cards = new[] {
+                    new { id = "id-1", name = "Card 1" },
+                    new { id = "id-2", name = "Card 2" } }
+            };
+            var json = ToJson(data); 
 
             // Exercise
-            var cards = parser.GetCards(json);
+            var cards = ParseCardsJson(json);
 
             // Verify
             var expected = new[] {
@@ -38,23 +50,23 @@ namespace TrelloSpc.UnitTest.JsonParsing
         public void ShouldInitializeListChanges()
         {
             // Setup
-            var parser = new JsonParser();
-            var json = @"{""actions"":[
-                                {""data"":
-                                    {""card"":{""id"":""card-id""},
-                                     ""listAfter"":{""id"":""list-2-id""},
-                                     ""listBefore"":{""id"":""list-1-id""}},
-                                 ""date"":""2012-10-10T12:01:02Z""}
-                             ],
-                          ""cards"":[
-                                {""id"":""card-id""}
-                            ],
-                          ""lists"":[
-                                {""id"":""list-1-id"",""name"":""list-1""},
-                                {""id"":""list-2-id"",""name"":""list-2""}]}";
+            var data = new {
+                actions = new[] {
+                    new { data = new { 
+                            card = new { id = "card-id" }, 
+                            listBefore = new { id = "list-1-id" }, 
+                            listAfter = new { id = "list-2-id" }},
+                          date = "2012-10-10T12:01:02Z" }},
+                cards = new[] { 
+                    new { id = "card-id" } },
+                lists = new[] {
+                    new { id = "list-1-id", name = "list-1" },
+                    new { id = "list-2-id", name = "list-2" }}
+            };
+            var json = ToJson(data);
 
             // Exercise
-            var cards = parser.GetCards(json);
+            var cards = ParseCardsJson(json);
                     
             // Verify
             var card = cards.Single();
@@ -69,6 +81,15 @@ namespace TrelloSpc.UnitTest.JsonParsing
                     UtcTime = new DateTime(2012,10,10,12,01,02)
                 }};
             Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ShouldNotComplainAboutUnknownCardOrListId()
+        {
+            var data = new { actions = new [] { new { data = new { card = new { id = "bad-card-id" } } } } ,
+                             cards = new object[0] };
+            var json = ToJson(data);
+            Assert.That(() => ParseCardsJson(json), Throws.Nothing);
         }
     }
 }
