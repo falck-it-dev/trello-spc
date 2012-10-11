@@ -9,6 +9,7 @@ namespace TrelloSpc.Models
     {
         IEnumerable<Card> GetCards(string jsonResponse);
         void ProcessCardHistory(Card card, string cardJson, ListLookupFunction getList);
+        IEnumerable<List> GetLists(string jsonResponse);
     }
 
     public class Action
@@ -24,44 +25,18 @@ namespace TrelloSpc.Models
         public IEnumerable<Card> GetCards(string jsonResponse)
         {
             var jObject = JObject.Parse(jsonResponse);
-            var lists = GetLists(jObject);
             var cards = GetCards(jObject);
-
-            ProcessActions(jObject, lists, cards);
 
             return cards.Values;
         }
 
-        private void ProcessActions(JToken jObject, Dictionary<string, List> lists, Dictionary<string, Card> cards)
+        public IEnumerable<List> GetLists(string jsonResponse)
         {
-            var jActions = jObject["actions"];
-            if (jActions == null)
-                return;
-
-            foreach (var jAction in (JArray)jActions)
-            {
-                var data = jAction["data"];
-                var cardId = (string)data["card"]["id"];
-                Card card;
-                if (!cards.TryGetValue(cardId, out card)) continue;
-                var listBefore = data["listBefore"];
-                var listAfter = data["listAfter"];                
-                if (listBefore != null && listAfter != null)
-                {
-                    var listId = listAfter["id"];                    
-                    var list = lists[listId.Value<string>()];
-                    var time = jAction["date"].Value<DateTime>();
-                    card.MoveToList(list, time);
-                }
-            }
-        }
-
-        private Dictionary<string, List> GetLists(JObject jObject)
-        {            
+            var jObject = JObject.Parse(jsonResponse);
             var lists = (JArray)jObject["lists"];
             if (lists == null)
                 return null;
-            return lists.Select(CreateList).ToDictionary(x => x.Id);
+            return lists.Select(CreateList);
         }
 
         private Dictionary<string, Card> GetCards(JObject jObject)

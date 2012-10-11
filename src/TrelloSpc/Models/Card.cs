@@ -5,46 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace TrelloSpc.Models
 {
-    public class MoveToListAction : IComparable<MoveToListAction>
-    {
-        public List List { get; set; }
-        public DateTime UtcTime { get; set; }
-
-        public int CompareTo(MoveToListAction other)
-        {
-            return UtcTime.CompareTo(other.UtcTime);
-        }
-    }
-
-
-    public class ListHistoryItem
-    {
-        public List List { get; set; }
-
-        /// <summary>
-        /// Gets the time when the card was transferred to the list. It this is unknown, then the value is <c>null</c>.
-        /// </summary>
-        public DateTime? StartTimeUtc { get; set; }
-        /// <summary>
-        /// Gets the time when the card was transferred to the list. It the card is still in the list, then the value is <c>null</c>.
-        /// </summary>
-        public DateTime? EndTimeUtc { get; set; }
-
-        public string ListName
-        {
-            get { return List == null ? null : List.Name; }
-        }
-
-        public TimeSpan Time
-        {
-            get { return ((EndTimeUtc ?? DateTime.UtcNow) - StartTimeUtc) ?? TimeSpan.Zero; }
-        }
-    }
-
     public class Card
     {
-        private string _trelloName;
-        private readonly List<MoveToListAction> _actions = new List<MoveToListAction>();
+        private string _trelloName;        
         private readonly List<ListHistoryItem> _listHistory = new List<ListHistoryItem>();
 
         public string Id { get; set; }
@@ -78,11 +41,6 @@ namespace TrelloSpc.Models
             }
         }
 
-        public List<MoveToListAction> Actions
-        {
-            get { return _actions; }
-        }
-
         public List<ListHistoryItem> ListHistory
         {
             get { return _listHistory; }
@@ -96,15 +54,6 @@ namespace TrelloSpc.Models
             foreach (var item in ListHistory.Where(x => x.ListName == listName))
                 result += item.Time;
             return result;
-        }
-
-        public void MoveToList(List list, DateTime utcTimeMovedToList)
-        {
-            Actions.Add(new MoveToListAction
-            {
-                List = list,
-                UtcTime = utcTimeMovedToList
-            });
         }
     }
 }

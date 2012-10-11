@@ -71,7 +71,6 @@
     <Compile Include="Model\CardTests\SetTrelloNameTest.cs" />
     <Compile Include="Model\CardTests\TimeInListTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\CardRepositoryTests\CardRepositoryTest.cs" />
     <Compile Include="Repositories\CardRepositoryTests\GetCardsForBoardTest.cs" />
   </ItemGroup>
   <ItemGroup>

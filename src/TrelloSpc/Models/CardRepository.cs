@@ -29,22 +29,12 @@ namespace TrelloSpc.Models
             _trelloRestGateway = trelloRestGateway;
         }
 
-        //public IEnumerable<Card> GetCardsForBoard(string boardId)
-        //{
-        //    var url = string.Format("https://api.trello.com/1/boards/{0}?cards=all&lists=all&actions=updateCard&actions_limit=1000&key={1}&token={2}",
-        //        boardId,
-        //        _trelloConfiguration.AppKey,
-        //        _trelloConfiguration.UserToken);
-
-        //    var jsonData = _trelloGateway.GetJsonData(url);
-        //    return _jsonParser.GetCards(jsonData);
-        //}
-
         public IEnumerable<Card> GetCardsForBoard(string boardId)
         {
             var cardsJson = _trelloRestGateway.GetCardsForBoard(boardId);
             var cards = _jsonParser.GetCards(cardsJson).ToArray();
-            var listLookupFunction = List.CreateLookupFunction();
+            var lists = _jsonParser.GetLists(cardsJson).ToArray();
+            var listLookupFunction = List.CreateLookupFunction(lists);
             foreach (var card in cards)
             {
                 var cardJson = _trelloRestGateway.GetCardWithHistory(card.Id);

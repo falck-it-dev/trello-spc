@@ -147,6 +147,7 @@
     <Compile Include="Models\CardRepository.cs" />
     <Compile Include="Models\JsonParser.cs" />
     <Compile Include="Models\List.cs" />
+    <Compile Include="Models\ListHistoryItem.cs" />
     <Compile Include="Models\NetworkConfiguration.cs" />
     <Compile Include="Models\TrelloGateway.cs" />
     <Compile Include="Models\TrelloNinjectModule.cs" />

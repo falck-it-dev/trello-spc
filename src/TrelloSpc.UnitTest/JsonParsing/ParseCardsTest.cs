@@ -57,42 +57,6 @@ namespace TrelloSpc.UnitTest.JsonParsing
         }
 
         [Test]
-        public void ShouldInitializeListChanges()
-        {
-            // Setup
-            var data = new {
-                actions = new[] {
-                    new { data = new { 
-                            card = new { id = "card-id" }, 
-                            listBefore = new { id = "list-1-id" }, 
-                            listAfter = new { id = "list-2-id" }},
-                          date = "2012-10-10T12:01:02Z" }},
-                cards = new[] { 
-                    new { id = "card-id" } },
-                lists = new[] {
-                    new { id = "list-1-id", name = "list-1" },
-                    new { id = "list-2-id", name = "list-2" }}
-            };
-
-            // Exercise
-            var cards = _parser.GetCards(data.ToJson());
-                    
-            // Verify
-            var card = cards.Single();
-            var actual = card.Actions.Select(x => new 
-                { 
-                    ListName = x.List.Name, 
-                    x.UtcTime 
-                }).ToArray();
-            var expected = new[] {
-                new { 
-                    ListName = "list-2", 
-                    UtcTime = new DateTime(2012,10,10,12,01,02)
-                }};
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
         public void ShouldNotComplainAboutUnknownCardOrListId()
         {
             var data = new { actions = new [] { new { data = new { card = new { id = "bad-card-id" } } } } ,
