@@ -15,10 +15,19 @@ namespace TrelloSpc.Models
         }
     }
 
+
+    public class ListHistoryItem
+    {
+        public List List { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+    }
+
     public class Card
     {
         private string _trelloName;
         private readonly List<MoveToListAction> _actions = new List<MoveToListAction>();
+        private readonly List<ListHistoryItem> _listHistory = new List<ListHistoryItem>();
 
         public string Id { get; set; }
 
@@ -55,6 +64,13 @@ namespace TrelloSpc.Models
         {
             get { return _actions; }
         }
+
+        public List<ListHistoryItem> ListHistory
+        {
+            get { return _listHistory; }
+        }
+
+        public List List { get; set; }
 
         public TimeSpan TimeInList(string listName)
         {
