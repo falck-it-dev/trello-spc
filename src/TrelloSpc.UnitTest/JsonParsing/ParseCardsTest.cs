@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
@@ -12,15 +11,12 @@ namespace TrelloSpc.UnitTest.JsonParsing
     [TestFixture]
     public class ParseCardsTest
     {
-        private string ToJson(object obj)
-        {
-            return JObject.FromObject(obj).ToString();
-        }
+        private JsonParser _parser;
 
-        private IEnumerable<Card> ParseCardsJson(string json)
+        [SetUp]
+        public void Setup()
         {
-            var parser = new JsonParser();
-            return parser.GetCards(json);
+            _parser = new JsonParser();
         }
 
         [Test]
@@ -35,10 +31,9 @@ namespace TrelloSpc.UnitTest.JsonParsing
                     new { id = "id-1", name = "Card 1" },
                     new { id = "id-2", name = "Card 2" } }
             };
-            var json = ToJson(data); 
-
+            
             // Exercise
-            var cards = ParseCardsJson(json);
+            var cards = _parser.GetCards(data.ToJson());
 
             // Verify
             var expected = new[] {
@@ -65,10 +60,9 @@ namespace TrelloSpc.UnitTest.JsonParsing
                     new { id = "list-1-id", name = "list-1" },
                     new { id = "list-2-id", name = "list-2" }}
             };
-            var json = ToJson(data);
 
             // Exercise
-            var cards = ParseCardsJson(json);
+            var cards = _parser.GetCards(data.ToJson());
                     
             // Verify
             var card = cards.Single();
@@ -90,8 +84,8 @@ namespace TrelloSpc.UnitTest.JsonParsing
         {
             var data = new { actions = new [] { new { data = new { card = new { id = "bad-card-id" } } } } ,
                              cards = new object[0] };
-            var json = ToJson(data);
-            Assert.That(() => ParseCardsJson(json), Throws.Nothing);
+            var json = data.ToJson();
+            Assert.That(() => _parser.GetCards(json), Throws.Nothing);
         }
 
         [Test]
@@ -105,7 +99,7 @@ namespace TrelloSpc.UnitTest.JsonParsing
 
             var createCardAction = JsonObjectHelpers.CreateCardAction(createTime, "card-id", "list-1-id");
             var moveCardAction = JsonObjectHelpers.MoveCardAction(moveToBoardTime, "card-id");
-            var lists = List.CreateDictionary(list1, list2);
+            var lists = List.CreateLookupFunction(list1, list2);
             var card = new Card { Id = "card-id", List = list2 };
             var actions = new { actions = new[] { 
                 // Keep order, Trello sends newest items first in list
@@ -114,7 +108,7 @@ namespace TrelloSpc.UnitTest.JsonParsing
             };
 
             // Exercise
-            JsonParser.ProcessCardHistory(card, actions.ToJson(), lists);
+            _parser.ProcessCardHistory(card, actions.ToJson(), lists);
 
             // verify
             var actualListHistory = card.ListHistory.Select(x =>
@@ -137,7 +131,7 @@ namespace TrelloSpc.UnitTest.JsonParsing
             var list1 = new List { Id = "list-1-id" };
             var list2 = new List { Id = "list-2-id" };
             var list3 = new List { Id = "list-3-id" };
-            var lists = List.CreateDictionary(list1, list2, list3);
+            var lists = List.CreateLookupFunction(list1, list2, list3);
             var time1 = DateTime.Parse("2012-01-01 12:00");
             var time2 = time1.AddHours(1);
             var time3 = time2.AddHours(2);
@@ -154,7 +148,7 @@ namespace TrelloSpc.UnitTest.JsonParsing
             var card = new Card { Id = "card-id", List = list3 };
             
             // Exercise
-            JsonParser.ProcessCardHistory(card, actions.ToJson(), lists);
+            _parser.ProcessCardHistory(card, actions.ToJson(), lists);
 
             // verify
             var actualListHistory = card.ListHistory.Select(x =>

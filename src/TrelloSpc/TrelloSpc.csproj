@@ -151,6 +151,7 @@
     <Compile Include="Models\TrelloGateway.cs" />
     <Compile Include="Models\TrelloNinjectModule.cs" />
     <Compile Include="Models\TrelloConfiguration.cs" />
+    <Compile Include="Models\TrelloRestGateway.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

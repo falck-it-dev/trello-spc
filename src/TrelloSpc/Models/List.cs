@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace TrelloSpc.Models
 {
+    public delegate List ListLookupFunction(string id);
+
     public class List
     {
         public string Id { get; set; }
@@ -12,9 +14,18 @@ namespace TrelloSpc.Models
         /// <summary>
         /// Creates a dictionary of a number of lists, using the <see cref="List.Id"/> as the key.
         /// </summary>
-        public static Dictionary<string, List> CreateDictionary(params List[] lists)
+        public static ListLookupFunction CreateLookupFunction(params List[] lists)
         {
-            return lists.ToDictionary(x => x.Id);
+            var dict = lists.ToDictionary(x => x.Id);
+            return id =>
+                {
+                    List result;
+                    if (dict.TryGetValue(id, out result)) return result;
+                    result = new List { Id = id };
+                    dict.Add(id, result);
+                    return result;
+                };
+            
         }
 
         public override string ToString()

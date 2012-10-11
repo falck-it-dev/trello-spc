@@ -8,6 +8,7 @@ namespace TrelloSpc.Models
     public interface IJsonParser
     {
         IEnumerable<Card> GetCards(string jsonResponse);
+        void ProcessCardHistory(Card card, string cardJson, ListLookupFunction getList);
     }
 
     public class Action
@@ -87,7 +88,7 @@ namespace TrelloSpc.Models
             return list;
         }
 
-        public static void ProcessCardHistory(Card card, string cardJson, Dictionary<string, List> lists)
+        public void ProcessCardHistory(Card card, string cardJson, ListLookupFunction getList)
         {
             var jObject = JObject.Parse(cardJson);
             var actions = (JArray)jObject["actions"];
@@ -104,7 +105,7 @@ namespace TrelloSpc.Models
                 {
                     case Action.CreateCard :
                         var listId = action["data"]["list"]["id"].Value<string>();
-                        var list = lists[listId];
+                        var list = getList(listId);
                         card.ListHistory.Add(new ListHistoryItem
                         {
                             List = list,
@@ -119,8 +120,8 @@ namespace TrelloSpc.Models
                         {
                             if (listBefore == null) throw new ApplicationException("UpdateCard parse error. listAfter specified, but listBefore not specified. Card: " + cardId);
                             if (listAfter == null) throw new ApplicationException("UpdateCard parse error. listBefore specified, but listAfter not specified. Card: " + cardId);
-                            var sourceList = lists[listBefore["id"].Value<string>()];
-                            var destList = lists[listAfter["id"].Value<string>()];
+                            var sourceList = getList(listBefore["id"].Value<string>());
+                            var destList = getList(listAfter["id"].Value<string>());
                             var listItem = card.ListHistory.Last();
                             listItem.EndTime = time;
                             if (listItem.List == null)
