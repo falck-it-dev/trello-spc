@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Moq;
 using NUnit.Framework;
 using TrelloSpc.Models;
@@ -32,7 +28,7 @@ namespace TrelloSpc.UnitTest.Repositories.CardRepositoryTests
                 .Returns(new [] { card});
             
             // Exercise
-            var cards = repository.NewGetCardsForBoard("BOARD-ID");
+            var cards = repository.GetCardsForBoard("BOARD-ID");
             
             // Verify
             Assert.That(cards.ToArray(), Is.EqualTo(new[] { card }));

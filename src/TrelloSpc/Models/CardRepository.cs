@@ -7,7 +7,7 @@ namespace TrelloSpc.Models
     public interface ICardRepository
     {
         IEnumerable<Card> GetCardsForBoard(string boardId);
-        IEnumerable<Card> NewGetCardsForBoard(string boardId);
+        //IEnumerable<Card> NewGetCardsForBoard(string boardId);
     }
 
     public class CardRepository : ICardRepository
@@ -29,18 +29,18 @@ namespace TrelloSpc.Models
             _trelloRestGateway = trelloRestGateway;
         }
 
+        //public IEnumerable<Card> GetCardsForBoard(string boardId)
+        //{
+        //    var url = string.Format("https://api.trello.com/1/boards/{0}?cards=all&lists=all&actions=updateCard&actions_limit=1000&key={1}&token={2}",
+        //        boardId,
+        //        _trelloConfiguration.AppKey,
+        //        _trelloConfiguration.UserToken);
+
+        //    var jsonData = _trelloGateway.GetJsonData(url);
+        //    return _jsonParser.GetCards(jsonData);
+        //}
+
         public IEnumerable<Card> GetCardsForBoard(string boardId)
-        {
-            var url = string.Format("https://api.trello.com/1/boards/{0}?cards=all&lists=all&actions=updateCard&actions_limit=1000&key={1}&token={2}",
-                boardId,
-                _trelloConfiguration.AppKey,
-                _trelloConfiguration.UserToken);
-
-            var jsonData = _trelloGateway.GetJsonData(url);
-            return _jsonParser.GetCards(jsonData);
-        }
-
-        public IEnumerable<Card> NewGetCardsForBoard(string boardId)
         {
             var cardsJson = _trelloRestGateway.GetCardsForBoard(boardId);
             var cards = _jsonParser.GetCards(cardsJson).ToArray();

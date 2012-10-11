@@ -16,6 +16,7 @@ namespace TrelloSpc.Models
         public const string CreateCard = "createCard";
         public const string UpdateCard = "updateCard";
         public const string MoveCardToBoard = "moveCardToBoard";
+        public const string ConvertToCardFromCheckItem = "convertToCardFromCheckItem";
     }
 
     public class JsonParser : IJsonParser
@@ -122,6 +123,8 @@ namespace TrelloSpc.Models
                             if (listAfter == null) throw new ApplicationException("UpdateCard parse error. listBefore specified, but listAfter not specified. Card: " + cardId);
                             var sourceList = getList(listBefore["id"].Value<string>());
                             var destList = getList(listAfter["id"].Value<string>());
+                            if (card.ListHistory.Count == 0)
+                                card.ListHistory.Add(new ListHistoryItem());
                             var listItem = card.ListHistory.Last();
                             listItem.EndTime = time;
                             if (listItem.List == null)
@@ -142,6 +145,9 @@ namespace TrelloSpc.Models
                             List = null, // Unknown at present
                             StartTime = time
                         });
+                        break;
+                    case Action.ConvertToCardFromCheckItem :
+                        card.ListHistory.Add(new ListHistoryItem { StartTime = time });
                         break;
                 }
             }

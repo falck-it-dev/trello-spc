@@ -16,14 +16,42 @@ namespace TrelloSpc.Models
 
     public class TrelloRestGateway : ITrelloRestGateway
     {
+        private readonly ITrelloGateway _trelloGateway;
+        private readonly ITrelloConfiguration _trelloConfiguration;
+
+        public TrelloRestGateway(
+            ITrelloGateway trelloGateway, 
+            ITrelloConfiguration trelloConfiguration)
+        {
+            _trelloGateway = trelloGateway;
+            _trelloConfiguration = trelloConfiguration;
+        }
+
         public string GetCardsForBoard(string boardId)
         {
-            throw new NotImplementedException();
+            var url = string.Format("https://api.trello.com/1/boards/{0}?cards=all&lists=all&key={1}&token={2}",
+                boardId,
+                _trelloConfiguration.AppKey,
+                _trelloConfiguration.UserToken);
+
+            return _trelloGateway.GetJsonData(url);
         }
 
         public string GetCardWithHistory(string cardId)
         {
-            throw new NotImplementedException();
+            var actions = String.Join(",",
+                new[] {
+                    Action.ConvertToCardFromCheckItem,
+                    Action.CreateCard,
+                    Action.MoveCardToBoard,
+                    Action.UpdateCard });
+
+            var url = string.Format("https://api.trello.com/1/cards/{0}?actions={1},updateCard,moveCardToBoard&actions_limit=1000&key={2}&token={3}",
+                cardId,
+                actions,
+                _trelloConfiguration.AppKey,
+                _trelloConfiguration.UserToken);
+            return _trelloGateway.GetJsonData(url);
         }
     }
 }

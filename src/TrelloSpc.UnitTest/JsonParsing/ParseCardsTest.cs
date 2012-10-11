@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 using TrelloSpc.Models;
 using TrelloSpc.UnitTest.Helpers;
+using Action = TrelloSpc.Models.Action;
 using List = TrelloSpc.Models.List;
 
 namespace TrelloSpc.UnitTest.JsonParsing
@@ -12,6 +13,18 @@ namespace TrelloSpc.UnitTest.JsonParsing
     public class ParseCardsTest
     {
         private JsonParser _parser;
+
+        private static object GetActualHistory(Card card)
+        {
+            var actualListHistory = card.ListHistory.Select(x =>
+                                                            new
+                                                            {
+                                                                x.List,
+                                                                x.StartTime,
+                                                                x.EndTime
+                                                            }).ToArray();
+            return actualListHistory;
+        }
 
         [SetUp]
         public void Setup()
@@ -111,16 +124,10 @@ namespace TrelloSpc.UnitTest.JsonParsing
             _parser.ProcessCardHistory(card, actions.ToJson(), lists);
 
             // verify
-            var actualListHistory = card.ListHistory.Select(x =>
-                new
-                {
-                    x.List,
-                    x.StartTime,
-                    x.EndTime
-                }).ToArray();
+            var actualListHistory = GetActualHistory(card);
             var expectedListHistory = new[] {
-                new { List = list1, StartTime = createTime, EndTime = (DateTime?)moveToBoardTime },
-                new { List = list2, StartTime = moveToBoardTime, EndTime = (DateTime?)null }};
+                new { List = list1, StartTime = (DateTime?)createTime, EndTime = (DateTime?)moveToBoardTime },
+                new { List = list2, StartTime = (DateTime?)moveToBoardTime, EndTime = (DateTime?)null }};
             Assert.That(actualListHistory, Is.EqualTo(expectedListHistory));
         }
 
@@ -151,17 +158,72 @@ namespace TrelloSpc.UnitTest.JsonParsing
             _parser.ProcessCardHistory(card, actions.ToJson(), lists);
 
             // verify
-            var actualListHistory = card.ListHistory.Select(x =>
-                new
-                {
-                    x.List,
-                    x.StartTime,
-                    x.EndTime
-                }).ToArray();
+            var actualListHistory = GetActualHistory(card);
             var expectedListHistory = new[] {
-                new { List = list1, StartTime = time1, EndTime = (DateTime?)time2 },
-                new { List = list2, StartTime = time2, EndTime = (DateTime?)time3 },
-                new { List = list3, StartTime = time3, EndTime = (DateTime?)null }};
+                new { List = list1, StartTime = (DateTime?)time1, EndTime = (DateTime?)time2 },
+                new { List = list2, StartTime = (DateTime?)time2, EndTime = (DateTime?)time3 },
+                new { List = list3, StartTime = (DateTime?)time3, EndTime = (DateTime?)null }};
+            Assert.That(actualListHistory, Is.EqualTo(expectedListHistory));
+        }
+
+        [Test]
+        public void ShouldHandlerConvertCardFromCheckList()
+        {
+            // Setup
+            var time1 = DateTime.Parse("2012-01-01");
+            var list1 = new List {Id = "list-1-id"};
+            var card = new Card {Id = "card-id", List = list1};
+            var lists = List.CreateLookupFunction(list1);
+            var convertCardAction = new
+                {
+                    type = Action.ConvertToCardFromCheckItem,
+                    date = time1.ToString("o")
+                };
+
+            var actions = new
+                {
+                    actions = new[]
+                        {
+                            convertCardAction
+                        }
+                };
+
+            // Exercise
+            _parser.ProcessCardHistory(card, actions.ToJson(), lists);
+
+            // Verify
+            var actualListHistory = GetActualHistory(card);
+            var expectedListHistory = new[]
+                {
+                    new {List = list1, StartTime = (DateTime?)time1, EndTime = (DateTime?) null},
+                };
+            Assert.That(actualListHistory, Is.EqualTo(expectedListHistory));
+        }
+
+        [Test]
+        public void ShouldNotThrowExceptionWhenStartHistoryIsMissing()
+        {
+            // Setup
+            var time = DateTime.Parse("2012-1-1");
+            var actions = new
+            {
+                actions = new[] {
+                JsonObjectHelpers.MoveToListAction(time, "card-id", "list-1-id", "list-2-id") }
+            };
+            var list1 = new List { Id = "list-1-id" };
+            var list2 = new List { Id = "list-2-id" };
+            var lists = List.CreateLookupFunction(list1, list2);
+            var card = new Card { Id = "card-id", List = list1 };
+            // Exercise
+            _parser.ProcessCardHistory(card, actions.ToJson(), lists);
+
+            // Verify
+            var actualListHistory = GetActualHistory(card);
+            var expectedListHistory = new[]
+                {
+                    new {List = list1, StartTime = (DateTime?)null, EndTime = (DateTime?)time },
+                    new {List = list2, StartTime = (DateTime?)time, EndTime = (DateTime?) null},
+                };
             Assert.That(actualListHistory, Is.EqualTo(expectedListHistory));
         }
     }

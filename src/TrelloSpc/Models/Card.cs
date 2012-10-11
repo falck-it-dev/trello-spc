@@ -19,7 +19,14 @@ namespace TrelloSpc.Models
     public class ListHistoryItem
     {
         public List List { get; set; }
-        public DateTime StartTime { get; set; }
+
+        /// <summary>
+        /// Gets the time when the card was transferred to the list. It this is unknown, then the value is <c>null</c>.
+        /// </summary>
+        public DateTime? StartTime { get; set; }
+        /// <summary>
+        /// Gets the time when the card was transferred to the list. It the card is still in the list, then the value is <c>null</c>.
+        /// </summary>
         public DateTime? EndTime { get; set; }
     }
 
