@@ -26,7 +26,7 @@ namespace TrelloSpc.Models
 
         public IEnumerable<Card> GetCardsForBoard(string boardId)
         {
-            var url = string.Format("https://api.trello.com/1/boards/{0}?cards=all&lists=all&actions=updateCard&key={1}&token={2}",
+            var url = string.Format("https://api.trello.com/1/boards/{0}?cards=all&lists=all&actions=updateCard&actions_limit=1000&key={1}&token={2}",
                 boardId,
                 _trelloConfiguration.AppKey,
                 _trelloConfiguration.UserToken);

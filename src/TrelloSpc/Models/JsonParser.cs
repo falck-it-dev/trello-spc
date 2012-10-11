@@ -33,14 +33,15 @@ namespace TrelloSpc.Models
             {
                 var data = jAction["data"];
                 var cardId = (string)data["card"]["id"];
+                Card card;
+                if (!cards.TryGetValue(cardId, out card)) continue;
                 var listBefore = data["listBefore"];
-                var listAfter = data["listAfter"];
-                var time = jAction["date"].Value<DateTime>();
+                var listAfter = data["listAfter"];                
                 if (listBefore != null && listAfter != null)
                 {
-                    var listId = listAfter["id"];
-                    var card = cards[cardId];
+                    var listId = listAfter["id"];                    
                     var list = lists[listId.Value<string>()];
+                    var time = jAction["date"].Value<DateTime>();
                     card.MoveToList(list, time);
                 }
             }
