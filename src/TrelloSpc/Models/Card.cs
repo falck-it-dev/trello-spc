@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace TrelloSpc.Models
@@ -23,11 +24,21 @@ namespace TrelloSpc.Models
         /// <summary>
         /// Gets the time when the card was transferred to the list. It this is unknown, then the value is <c>null</c>.
         /// </summary>
-        public DateTime? StartTime { get; set; }
+        public DateTime? StartTimeUtc { get; set; }
         /// <summary>
         /// Gets the time when the card was transferred to the list. It the card is still in the list, then the value is <c>null</c>.
         /// </summary>
-        public DateTime? EndTime { get; set; }
+        public DateTime? EndTimeUtc { get; set; }
+
+        public string ListName
+        {
+            get { return List == null ? null : List.Name; }
+        }
+
+        public TimeSpan Time
+        {
+            get { return ((EndTimeUtc ?? DateTime.UtcNow) - StartTimeUtc) ?? TimeSpan.Zero; }
+        }
     }
 
     public class Card
@@ -82,25 +93,8 @@ namespace TrelloSpc.Models
         public TimeSpan TimeInList(string listName)
         {
             var result = TimeSpan.Zero;
-            DateTime? timeIntoList = null;
-            Actions.Sort();
-            foreach (var action in Actions)
-            {
-                if (action.List.Name == listName)
-                {
-                    timeIntoList = timeIntoList ?? action.UtcTime;
-                }
-                else
-                {
-                    if (timeIntoList != null)
-                    {
-                        result += action.UtcTime - timeIntoList.Value;
-                        timeIntoList = null;
-                    }
-                }
-            }
-            if (timeIntoList != null)
-                result += DateTime.UtcNow - timeIntoList.Value;
+            foreach (var item in ListHistory.Where(x => x.ListName == listName))
+                result += item.Time;
             return result;
         }
 

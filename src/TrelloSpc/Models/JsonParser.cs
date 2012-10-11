@@ -110,7 +110,7 @@ namespace TrelloSpc.Models
                         card.ListHistory.Add(new ListHistoryItem
                         {
                             List = list,
-                            StartTime = time
+                            StartTimeUtc = time
                         });
                         break;
                     case Action.UpdateCard:
@@ -126,7 +126,7 @@ namespace TrelloSpc.Models
                             if (card.ListHistory.Count == 0)
                                 card.ListHistory.Add(new ListHistoryItem());
                             var listItem = card.ListHistory.Last();
-                            listItem.EndTime = time;
+                            listItem.EndTimeUtc = time;
                             if (listItem.List == null)
                                 listItem.List = sourceList;
                             else
@@ -134,20 +134,20 @@ namespace TrelloSpc.Models
                             card.ListHistory.Add(new ListHistoryItem
                             {
                                 List = destList,
-                                StartTime = time
+                                StartTimeUtc = time
                             });
                         }
                         break;
                     case Action.MoveCardToBoard:
-                        card.ListHistory.Last().EndTime = time;
+                        card.ListHistory.Last().EndTimeUtc = time;
                         card.ListHistory.Add(new ListHistoryItem
                         {
                             List = null, // Unknown at present
-                            StartTime = time
+                            StartTimeUtc = time
                         });
                         break;
                     case Action.ConvertToCardFromCheckItem :
-                        card.ListHistory.Add(new ListHistoryItem { StartTime = time });
+                        card.ListHistory.Add(new ListHistoryItem { StartTimeUtc = time });
                         break;
                 }
             }

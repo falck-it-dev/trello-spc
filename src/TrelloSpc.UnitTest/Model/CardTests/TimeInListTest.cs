@@ -25,8 +25,8 @@ namespace TrelloSpc.UnitTest.Model.CardTests
             var list1 = new List { Name = "LIST1" };
             var list2 = new List { Name = "LIST2" };
             var card = new Card();
-            card.MoveToList(list1, time1);
-            card.MoveToList(list2, time2);
+            card.ListHistory.Add(new ListHistoryItem { List = list1, StartTimeUtc = time1, EndTimeUtc = time2 });
+            card.ListHistory.Add(new ListHistoryItem { List = list2, StartTimeUtc = time2, EndTimeUtc = null });            
 
             // Exercise
             var actual = card.TimeInList("LIST1");
@@ -43,7 +43,7 @@ namespace TrelloSpc.UnitTest.Model.CardTests
             var time1 = DateTime.UtcNow.AddMinutes(-5);
             var list1 = new List { Name = "LIST1" };
             var card = new Card();
-            card.MoveToList(list1, time1);
+            card.ListHistory.Add(new ListHistoryItem { List = list1, StartTimeUtc = time1 });            
 
             // Exercise
             var actual = card.TimeInList("LIST1");

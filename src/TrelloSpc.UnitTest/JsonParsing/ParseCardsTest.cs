@@ -20,8 +20,8 @@ namespace TrelloSpc.UnitTest.JsonParsing
                                                             new
                                                             {
                                                                 x.List,
-                                                                x.StartTime,
-                                                                x.EndTime
+                                                                StartTime = x.StartTimeUtc,
+                                                                EndTime = x.EndTimeUtc
                                                             }).ToArray();
             return actualListHistory;
         }
