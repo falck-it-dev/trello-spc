@@ -65,6 +65,7 @@
     <Compile Include="AutoMockHelper.cs" />
     <Compile Include="Controllers\BoardsControllerTest\GetTest.cs" />
     <Compile Include="Controllers\BoardsControllerTest\IndexTest.cs" />
+    <Compile Include="Helpers\JsonExtensions.cs" />
     <Compile Include="JsonParsing\JsonObjectHelpers.cs" />
     <Compile Include="JsonParsing\ParseCardsTest.cs" />
     <Compile Include="Model\CardTests\SetTrelloNameTest.cs" />

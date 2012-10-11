@@ -4,18 +4,11 @@ using System.Linq;
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 using TrelloSpc.Models;
+using TrelloSpc.UnitTest.Helpers;
 using List = TrelloSpc.Models.List;
 
 namespace TrelloSpc.UnitTest.JsonParsing
 {
-    public static class JsonExtensions
-    {
-        public static string ToJson(this object obj)
-        {
-            return JObject.FromObject(obj).ToString();
-        }
-    }
-
     [TestFixture]
     public class ParseCardsTest
     {
@@ -121,7 +114,7 @@ namespace TrelloSpc.UnitTest.JsonParsing
             };
 
             // Exercise
-            JsonParser.ProcessCardHistory(card, JObject.FromObject(actions), lists);
+            JsonParser.ProcessCardHistory(card, actions.ToJson(), lists);
 
             // verify
             var actualListHistory = card.ListHistory.Select(x =>
@@ -161,7 +154,7 @@ namespace TrelloSpc.UnitTest.JsonParsing
             var card = new Card { Id = "card-id", List = list3 };
             
             // Exercise
-            JsonParser.ProcessCardHistory(card, JObject.FromObject(actions), lists);
+            JsonParser.ProcessCardHistory(card, actions.ToJson(), lists);
 
             // verify
             var actualListHistory = card.ListHistory.Select(x =>

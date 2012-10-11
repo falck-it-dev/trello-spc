@@ -87,8 +87,9 @@ namespace TrelloSpc.Models
             return list;
         }
 
-        public static void ProcessCardHistory(Card card, JObject jObject, Dictionary<string, List> lists)
+        public static void ProcessCardHistory(Card card, string cardJson, Dictionary<string, List> lists)
         {
+            var jObject = JObject.Parse(cardJson);
             var actions = (JArray)jObject["actions"];
             if (actions == null)
                 throw new ApplicationException("No actions found");
