@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using TrelloSpc.Models;
 
-namespace TrelloSpc.UnitTest.Repositories
+namespace TrelloSpc.UnitTest.Repositories.CardRepositoryTests
 {
     [TestFixture]
     public class CardRepositoryTest : AutoMockHelper
